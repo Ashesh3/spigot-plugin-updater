@@ -30,12 +30,6 @@ It is recommended to run this script once per day or a few hours gap.
 		"resource_id":  75519,
 		"auto_update":  true,
 		"path":  "plugins/APortalGun.jar"
-	},
-	{
-		"name":  "Telegram Reporter Reborn",
-		"resource_id":  80768,
-		"auto_update":  true,
-		"path":  "plugins/TelegramReporterReborn.jar"
 	}
 
 ]
