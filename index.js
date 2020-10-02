@@ -115,4 +115,5 @@ async function downloadPlugin(downloadLink, path) {
         await downloadPlugin(plugin_info.downloadLink, plugin.path)
     }
     log(chalk.greenBright('---------------------------------------'))
+    process.exit(0)
 })()
