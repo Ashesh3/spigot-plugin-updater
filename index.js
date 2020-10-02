@@ -20,11 +20,25 @@ async function bypassCloudFlare(url) {
             log(chalk.blue('Getting Cloudflare cookies...'))
             const page = await browser.newPage()
             await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36');
-            await page.goto(url)
-            await page.waitFor(20000)
+            if (fs.existsSync('./cookies.json')) {
+                var cookies = JSON.parse(fs.readFileSync('./cookies.json'));
+                await page.setCookie(...cookies);
+                log(chalk.greenBright(`Loaded Existing Cookies!: `) + chalk.red(`${JSON.stringify(cookies)} `))
+            }
+            try {
+                await page.goto(url)
+                log(chalk.white(`Loading...`))
+                await page.waitFor(20000)
+            } catch (e) {
+                log(chalk.green("Already Bypassed! ✨"))
+                CLOUDFLARE_USERAGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
+                resolve(cookies)
+                return
+            }
             CLOUDFLARE_USERAGENT = await page.evaluate(() => navigator.userAgent);
             log(chalk.blue(`Useragent: ${CLOUDFLARE_USERAGENT}`))
             log(chalk.green(`Success!✨`))
+            fs.writeFileSync('./cookies.json', JSON.stringify(await page.cookies(), null, 2));
             resolve(await page.cookies())
             await browser.close()
         }).catch(e => { console.log(e); reject('No cookies') })
@@ -48,7 +62,7 @@ async function getPluginInfo(resource_id) {
 function formatCookies(cookieJson) {
     var cookie_str = ''
     for (var i = 0; i < cookieJson.length; i++)
-        cookie_str += `${cookieJson[i].name}=${cookieJson[i].value}; `
+        cookie_str += `${cookieJson[i].name} = ${cookieJson[i].value}; `
     return cookie_str
 }
 
@@ -80,7 +94,7 @@ async function downloadPlugin(downloadLink, path) {
         "mode": "cors"
     });
 
-    if (!response.ok) throw new Error(`Unexpected response ${await response.statusText}`)
+    if (!response.ok) throw new Error(`Unexpected response ${await response.statusText} `)
     await streamPipeline(response.body, fs.createWriteStream(path))
 
 }

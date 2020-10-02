@@ -4,6 +4,7 @@
 
 A Simple Nodejs script to auto update plugins from Spigot (Bypassing cloudflare protection)
 It is recommended to run this script once per day or a few hours gap.
+Auto Saves and Restores Cookie Sessions
 
 **Instructions**
 1. Clone the repo
